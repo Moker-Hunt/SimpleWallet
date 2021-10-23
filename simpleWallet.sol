@@ -15,21 +15,21 @@ contract simpleWallet {
         tvm.accept();
     }
 
-    function sendWitoutPayComission(address dest, uint128 amount) public view {
+    modifier checkOwnerAndAccept() {
         require(msg.pubkey() == tvm.pubkey(), 102);
         tvm.accept();
+        _;
+    }
+
+    function sendWitoutPayComission(address dest, uint128 amount) public view checkOwnerAndAccept{
         dest.transfer(amount, true, 0);
     }
 
-    function sendWitPayComission(address dest, uint128 amount) public view {
-        require(msg.pubkey() == tvm.pubkey(), 102);
-        tvm.accept();
+    function sendWitPayComission(address dest, uint128 amount) public view checkOwnerAndAccept{
         dest.transfer(amount, true, 0);
     }
 
-    function sendAllAndDestroyWallet(address dest) public view {
-        require(msg.pubkey() == tvm.pubkey(), 102);
-        tvm.accept();
+    function sendAllAndDestroyWallet(address dest) public view checkOwnerAndAccept{
         dest.transfer(0, true, 128 + 32);
     }
 }
